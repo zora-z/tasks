@@ -1,0 +1,422 @@
+#include<iostream>  
+#include<string> 
+#include <fstream> 
+#include<sstream> 
+#include<iomanip> 
+using namespace std;  
+
+//结点类，用于存放学生的各种数据 
+class Node{  
+public: 
+int id; //学号 
+string name; //姓名 
+string grade; //等级 
+double english; //英语 
+double math; //数学 
+double c; //C++ 
+double sum; //总分 
+ double average; 
+Node *next; //指向下一结点的指针 
+Node(int nid=0,string nname="noname", //构造函数，初始化变量 
+double e=0,double m=0,double cl=0, 
+double s=0 ,double a=0,string g="ng"); 
+}; 
+
+Node::Node(int nid,string nname,double e,double m,double cl,double s,double a,string g){  
+id=nid;  
+name=nname;  
+next=NULL; 
+english=e; 
+math=m; 
+c=cl; 
+sum=s; 
+average=a; 
+grade=g; 
+
+} 
+//class NOde结束 
+
+//Link类，把数据以链表的形式存储，链表的每个结点为一个Node对象 
+class Link{  
+private:  
+Node *head; //链表的头指针，为Node对象类型的指 
+
+public :  
+Link();//构造函数，初始化变量 
+bool linkIsEmpty();//判断链表是否为空 
+void linkInsert(Node *newnode);//向链表中插入新的结点 
+bool linkDelete(int nid);//从链表中删除的结点 
+void linkClear();//清空链表中数据 
+void linkView();//查看链表中数据 
+void linkGrade(Node *p1);//计算等级 
+void linkAverageTotle();//按平均分统计 
+Node* linkFind(int nid);//在链表中查找id为nid结点，返回指向该结点的指针 
+Node* getHead();//获取头指针 
+}; 
+
+Link::Link(){ //构造函数，初始化链表为空 
+head=NULL; 
+}  
+
+bool Link::linkIsEmpty(){ //判断链表是否为空，空则返回true 
+return(head==NULL); 
+}  
+
+void Link::linkInsert(Node *newnode){//按id值从小到大的顺序，插入新的结点 
+Node *p1; 
+if(!head)//链表为空的情况 
+head=newnode; 
+else if((head->id)>(newnode->id)){//插入到第一个结点的情况 
+newnode->next=head; 
+head=newnode; 
+} 
+else{//插入到第二个及以后情况 
+p1=head; 
+while(1){ 
+if(!(p1->next)){ 
+p1->next=newnode; 
+break; 
+} 
+else if((p1->next)->id>newnode->id){ 
+newnode->next=p1->next; 
+p1->next=newnode; 
+break; 
+} 
+p1=p1->next; 
+} 
+} 
+}  
+
+bool Link::linkDelete(int nid){//删除结点，成功则返回true 
+Node *p; 
+if(head==NULL)//链表为空的情况 
+return false; 
+if(head->id==nid){//删除的为第一个结点的情况 
+head=head->next; 
+return true; 
+} 
+p=head; 
+while(p->next){//删除的为第二个及以后结点的情况 
+if((p->next)->id==nid){ 
+p->next=(p->next)->next; 
+return true; 
+} 
+p=p->next; 
+} 
+return false; 
+} 
+
+void Link::linkClear(){//清空链表 
+head=NULL; 
+} 
+
+void Link::linkView(){//显示链表数据 
+Node *p=head; 
+  
+cout<<setw(10)<<"学号"<<setw(8)<<"姓名"<<setw(8)<<"英语"<<setw(8) 
+<<"数学"<<setw(8)<<"C++"<<setw(8)<<"总分"<<setw(8)<<"平均分"<<setw(8)<<"等级"<<endl; 
+while(p){ 
+ (p->sum)=(p->english)+(p->math)+(p->c);//计算总分 
+ (p->average)=((p->english)+(p->math)+(p->c))/3;//计算平均成绩 
+  linkGrade(p);//计算等级 
+cout<<setw(10)<<p->id<<setw(8)<<p->name<<setw(8)<<p->english 
+<<setw(8)<<p->math<<setw(8)<<p->c<<setw(8)<<p->sum<<setw(8) 
+<<p->average<<setw(8)<<p->grade<<endl; 
+ p=p->next; 
+} 
+
+} 
+
+void Link::linkGrade(Node *p1){ // 计算等级 
+while(p1){ 
+ if(p1->average>=90&&p1->average<=100) 
+ p1->grade="优"; 
+else if(p1->average>=80&&p1->average<90) 
+ p1->grade="良好"; 
+else if(p1->average>=70&&p1->average<80) 
+ p1->grade="中等"; 
+else if(p1->average>=60&&p1->average<=70) 
+ p1->grade="合格"; 
+else  
+p1->grade="不合格"; 
+
+p1=p1->next; 
+} 
+ } 
+void Link::linkAverageTotle(){//按学生平均分统计 
+int a=0,b=0,c=0,d=0,e=0,f=0; 
+double averagesum=0,asum=0,aaverage=0,paverage=0; 
+Node *p3=head; 
+while(p3){ 
+ if(p3->average>=90&&p3->average<=100) 
+  a+=1; 
+else if(p3->average>=80&&p3->average<90) 
+ b+=1; 
+else if(p3->average>=70&&p3->average<80) 
+ c+=1; 
+ else if(p3->average>=60&&p3->average<70) 
+ d+=1; 
+else  
+ e+=1; 
+asum+=p3->sum; 
+aaverage+=p3->average; 
+p3=p3->next; 
+} 
+f=a+b+c+d+e; 
+averagesum=asum/f; 
+paverage=aaverage/f; 
+cout<<"|-------------------------------------------------------|"<<endl; 
+cout<<"| 总 人 数："<<f<<endl; 
+cout<<"|-------------------------------------------------------|"<<endl; 
+cout<<"| 优 人 数："<<a<<" | "<<"优 秀 率： "<<a*100/f<<"%"<<endl; 
+cout<<"|-------------------------------------------------------|"<<endl; 
+cout<<"| 良 好 的人数："<<b<<" | "<<"良 好 率： "<<b*100/f<<"%"<<endl; 
+cout<<"|-------------------------------------------------------|"<<endl; 
+cout<<"| 中 等 的人数："<<c<<" | "<<"中 等 率： "<<c*100/f<<"%"<<endl; 
+cout<<"|-------------------------------------------------------|"<<endl; 
+cout<<"| 所有合格人数："<<a+b+c+d<<" | "<<"合 格 率： "<<(a+b+c+d)*100/f<<"%"<<endl; 
+cout<<"|-------------------------------------------------------|"<<endl; 
+cout<<"| 不 合 格 数："<<e<<" | "<<"不合格率： "<<e*100/f<<"%"<<endl; 
+cout<<"|-------------------------------------------------------|"<<endl; 
+cout<<"| 总分的平均分:"<<averagesum<<" | "<<"所有科目的平均分:"<<paverage<<endl; 
+cout<<"|-------------------------------------------------------|"<<endl; 
+ } 
+
+Node* Link::linkFind(int nid){//查找id值为nid的结点，返回该结点的指针 
+Node *p=head; //没找到符合条件的结点的话，返回的指针值为NULL 
+while(p){ 
+if(p->id==nid) 
+break; 
+else 
+p=p->next; 
+} 
+return p; 
+} 
+Node* Link::getHead(){ 
+return head; 
+} 
+//class Link 结束 
+
+//类Student,用于包装Link类及菜单操作 
+class Student{ 
+private:  
+Link slink;//Link对象成员 
+bool k;//记录数据是否被修改 
+public:  
+Student(); 
+void studentClear(); 
+void studentInsert(); 
+void studentDelete(); 
+void studentFind(); 
+void studentView(); 
+void studentLoad(); 
+void studentSave(); 
+ void studentAverageTotle();//按平均分数统计等级 
+void Exit()();//退出程序 
+void showMenu();//显示菜单 
+void showTip();//显示操作提示 
+void doMenu(char n);//执行相应菜单项功能 
+}; 
+Student::Student(){  
+Link();//调用成员对象的构造函数 
+studentLoad();//从文件中读取数据，创建链表 
+k=false;//设置数据被修改 
+} 
+
+void Student::studentClear(){//清空学生记录 
+slink.linkClear(); 
+cout<<"成功清空学生记录！"<<endl; 
+} 
+
+void Student::studentInsert(){//插入学生记录 
+Node *p=new Node(); 
+  
+ cout<<"请输入学号："; 
+cin>>p->id; 
+cout<<"请输入姓名："; 
+cin>>p->name; 
+if(!slink.linkFind(p->id)){//判断学号是否存在 
+
+slink.linkInsert(p); 
+k=true; 
+} 
+else 
+cout<<"学号为"<<p->id<<"的学生已存在，插入失败！"<<endl; 
+ cout<<"请输入成绩："<<endl; 
+ cout<<"英语："; 
+ cin>>p->english; 
+ cout<<endl; 
+ cout<<"数学："; 
+ cin>>p->math; 
+ cout<<endl; 
+ cout<<"C++:"; 
+ cin>>p->c; 
+ cout<<endl; 
+ (p->sum)=(p->english)+(p->math)+(p->c);//计算总分 
+(p->average)=((p->english)+(p->math)+(p->c))/3;//计算平均成绩 
+
+} 
+
+void Student::studentDelete(){//删除学生记录 
+int i; 
+if(slink.linkIsEmpty())//链表为空的情况 
+cout<<"没有学生记录！"<<endl; 
+else{ 
+cout<<"请输入学号："; 
+cin>>i; 
+if(slink.linkDelete(i)){ 
+cout<<"成功删除学号为"<<i<<"的学生记录！"<<endl; 
+k=true; 
+} 
+else 
+cout<<"没有找到学号为"<<i<<"的学生！"<<endl; 
+} 
+} 
+
+void Student::studentFind(){//查找某学号的学生记录 
+int n; 
+Node *p; 
+if(slink.linkIsEmpty())//链表为空的情况 
+cout<<"没有学生记录！"<<endl; 
+else{ 
+cout<<"请输入要查找的学号："; 
+cin>>n; 
+p=slink.linkFind(n);//获得找到的结点的指针 
+if(p){//指针值不为NULL时 
+(p->sum)=(p->english)+(p->math)+(p->c);//计算总分 
+(p->average)=((p->english)+(p->math)+(p->c))/3;//计算平均成绩 
+slink.linkGrade(p); 
+cout<<setw(6)<<"学号"<<setw(8)<<"姓名"<<setw(8)<<"英语" 
+<<setw(8)<<"数学"<<setw(8)<<"C++"<<setw(8)<<"总分"<<setw(8) 
+<<"平均分"<<setw(8)<<"等级"<<endl; 
+cout<<setw(6)<<p->id<<setw(8)<<p->name<<setw(8)<<p->english 
+<<setw(8)<<p->math<<setw(8)<<p->c<<setw(8)<<p->sum<<setw(8)<<p->average 
+<<setw(8)<<p->grade<<endl; 
+} 
+else//指针值为NULL时 
+cout<<"没有找到学号为"<<n<<"的学生记录！"<<endl; 
+} 
+} 
+
+void Student::studentView(){//显示所有学生的记录 
+if(slink.linkIsEmpty()) 
+cout<<"没有学生记录！"<<endl; 
+else 
+slink.linkView(); 
+} 
+
+void Student::studentLoad(){//从文件中读入数据，创建链表 
+Node *p; 
+int nid; 
+ifstream infile("data.txt"); 
+if(!infile) 
+cerr<<"错误：数据文件不能打开!\n"; 
+else 
+while(infile>>nid){//读取学号，直到读空 
+p=new Node(); 
+p->id=nid; 
+infile>>p->name>>p->english>>p->math>>p->c>>p->sum>>p->average>>p->grade;//读取姓名 
+slink.linkInsert(p); 
+} 
+infile.close(); //关闭文件 
+} 
+
+void Student::studentSave(){//将数据保存到文件 
+Node *p=slink.getHead(); 
+ofstream outfile("data.txt"); 
+if(!outfile) 
+cerr<<"错误：数据文件不能打开!\n"; 
+else{ 
+while(p){ 
+outfile<<p->id<<' '<<p->name<<' '<<p->english<<' '<<p->math<<' ' 
+<<p->c<<' '<<p->sum<<' '<<p->average<<' '<<p->grade<<endl; 
+p=p->next; 
+} 
+k=false; 
+cout<<"保存成功！"<<endl; 
+} 
+} 
+
+void Student::studentAverageTotle(){ 
+if(slink.linkIsEmpty()) 
+cout<<"没有学生记录！"<<endl; 
+ else 
+ slink.linkAverageTotle(); 
+} 
+void Student::Exit()(){ 
+char s='Y'; 
+if(k){//判断数据是否修改 
+cout<<"数据已经改变，是否保存？(y/n)："; 
+cin>>s; 
+if(s=='y'||s=='Y') 
+studentSave(); 
+} 
+cout<<"已安全退出，"; 
+system("pause"); 
+exit(0); 
+} 
+
+void Student::showMenu(){ 
+cout<<" "<<"|------------------------------------------------|"<<endl; 
+cout<<" "<<"| 学生信息管理系统 |"<<endl; 
+cout<<" "<<"|------------------------------------------------|"<<endl; 
+cout<<" "<<"| 1. 清空：清除所有学生数据 |"<<endl; 
+ cout<<" "<<"|------------------------------------------------|"<<endl; 
+cout<<" "<<"| 2. 添加：插入一条学生数据 |"<<endl; 
+ cout<<" "<<"|------------------------------------------------|"<<endl; 
+cout<<" "<<"| 3. 删除：删除指定学生数据 |"<<endl; 
+cout<<" "<<"|------------------------------------------------|"<<endl; 
+cout<<" "<<"| 4. 查找：查找指定学生数据 |"<<endl; 
+cout<<" "<<"|------------------------------------------------|"<<endl; 
+cout<<" "<<"| 5. 显示：显示所有学生数据 |"<<endl; 
+cout<<" "<<"|------------------------------------------------|"<<endl; 
+cout<<" "<<"| 6. 保存：保存所有学生数据 |"<<endl; 
+cout<<" "<<"|------------------------------------------------|"<<endl; 
+cout<<" "<<"| 7. 统计：按学生平均分统计 |"<<endl; 
+cout<<" "<<"|------------------------------------------------|"<<endl; 
+cout<<" "<<"| 0. 退出：安全的退出本系统 |"<<endl; 
+cout<<" "<<"|------------------------------------------------|"<<endl<<endl; 
+} 
+
+void Student::showTip(){  
+cout<<endl; 
+cout<<"-------------------操作完成---------------------"<<endl;  
+cout<<"-----------------选择0－7继续-------------------"<<endl;  
+cout<<"请选择：";  
+} 
+
+void Student::doMenu(char n){ 
+switch(n){ 
+case '1': 
+studentClear();break; 
+case '2': 
+studentInsert();break; 
+case '4': 
+studentFind();break; 
+case '3': 
+studentDelete();break; 
+case '5': 
+studentView();break; 
+case '6': 
+studentSave();break; 
+case '7': 
+studentAverageTotle();break; 
+case '0': 
+Exit()();break; 
+default:cout<<"输入错误!"; 
+} 
+} 
+
+int main(){ 
+Student s; 
+char i='9'; 
+s.showMenu(); 
+cout<<"选择对应数字进行操作:";  
+while(1){ 
+cin>>i; 
+system("cls"); //清除屏幕 
+s.showMenu(); 
+s.doMenu(i); 
+s.showTip(); 
+} 
+}
